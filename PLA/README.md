@@ -1,3 +1,5 @@
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "AMS" } } }); </script>
+
 | ![](http://a3.att.hudong.com/30/34/01100000000000144722342994012_140.jpg) | 人工智能实验 |
 | ---------------------------------------- | ------ |
 |                                          |        |
