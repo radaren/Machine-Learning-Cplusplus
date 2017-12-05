@@ -1,7 +1,3 @@
-<head>
-<script type="text/javascript"  
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>  
-</head>
 | ![](http://a3.att.hudong.com/30/34/01100000000000144722342994012_140.jpg) | 人工智能实验 |
 | ---------------------------------------- | ------ |
 |                                          |        |
