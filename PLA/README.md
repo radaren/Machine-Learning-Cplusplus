@@ -1,6 +1,6 @@
-| ![](img/sysu.png) | 人工智能实验 |
-| --------------- | ------ |
-|                 |        |
+| ![](http://a3.att.hudong.com/30/34/01100000000000144722342994012_140.jpg) | 人工智能实验 |
+| ---------------------------------------- | ------ |
+|                                          |        |
 
 ##中山大学数据科学与计算机学院移动信息工程专业
 
@@ -25,6 +25,85 @@
 ##二、 实验内容
 
 ### 算法原理
+
+####二分感知机分类原理
+
+感知机预测的函数是对于一个**x** 向量每一个元素的加权组合，组合的结果大于threshold的时候预测结果为1（正样本），否则预测结果为-1(负样本）：
+$$
+predict(\vec x) =  
+\begin{cases}  
+1, &\text{if  $\vec w^T\vec x > threshold$} \\
+-1, &\text{else}  
+\end{cases}
+$$
+进一步，可以对于特征向量，添加一个偏置项1，来将`threshold`并入特征部分：
+$$
+\vec{x_0} = [a_0,a_1,...a_n]^T\\
+\vec{x} = [1,a_0,a_1,...a_n]^T
+\\
+predict(\vec x) =  
+\begin{cases}  
+1, &\text{if  $\vec w^T\vec x > 0$} \\
+-1, &\text{else}  
+\end{cases}
+$$
+
+### 二分感知机训练原理
+
+感知机是通过迭代的方法训练，对于每一次迭代，使用当前存储的**w**对于每一个（训练集）样本进行预测，当预测结果与训练标签不同的时候，使用当前训练样本，更新**w**中每个项,直到收敛/完全预测正确/达到理想迭代次数，在第t次迭代中：
+$$
+\vec w_{t+1} =
+\begin{cases}  
+\vec w_t + y_i \vec x_i, &\text{if  $\vec w^T\vec x_i \neq y_i$} \\
+\vec w_{t}, &\text{else}  
+\end{cases}
+$$
+这里使用的损失函数是误分类点到划分超平面的距离：
+$$
+loss(\vec w) =
+\begin{cases}  
+-\sum_i y_i(\vec w ^T\vec x_i), &\text{if  $\vec w ^T\vec x_i \neq y_i$} \\
+0, &\text{$\vec w ^T\vec x_i = y_i$ }  
+\end{cases}
+$$
+由于更新的是**w**向量，转化为**w**的函数：
+$$
+f(\vec w) = y_i*predict(\vec x) =y_i \vec w^T \vec x \\ =y_i( w_0x_0 + w_1x_1 + \dots+w_nx_n)\\
+$$
+因此，预测成功时候为是分别对于**w** 中的每个项求导数，而后对于错误样本，使用一阶偏导数,依据分类错误类型，(对于误分类样本)进行更新：
+$$
+\vec {w_{t+1} }:= \vec{w_t} + \sum_i \frac{\partial f(\vec w_t)}{\partial w_i}
+\\
+where :\frac{\partial \vec w}{\partial w_i} =y_i x_i\\
+$$
+
+### pocket
+
+在多次迭代中，保存分类结果最好的**w**作为模型：
+$$
+\vec w={minarg}_{loss(\vec w)} \vec w_i \\for\ w_i \ in\ each\ itreation
+$$
+
+### bagging
+
+通过随机初始化，训练之后得到多个**w**, 而后使用多个**w** 分别预测，使用所有预测结果进行最终预测:
+$$
+predict(\vec x)=sign(\sum_i  \vec w_i^T \vec x)
+$$
+
+### dropout
+
+一种防止过拟合的策略，对于错误样本以及错误样本中的每个元素，有一定概率不更新：
+$$
+\vec w_{t+1} =
+\begin{cases}  
+\vec w_t + y_i \vec x_i, &\text{if  $\vec w^T\vec x_i \neq y_i$ and $random()>DropOutRate$} \\
+\vec w_{t}, &\text{else}  
+\end{cases}
+$$
+
+
+### 伪代码
 
 感知机分类算法是一种通过对于特征的线性组合预测值而后与阈值相比较而得到结果的一种算法
 
@@ -189,7 +268,7 @@ for(int cell = 1; cell <= 200; ++cell)
 
 ### 创新点&优化
 
-1. 设置学习率$\alpha$ (优化了bagging模型的F1值）
+1. 设置学习率 $\alpha$  (优化了bagging模型的F1值）
    $$
    w(xi)` := w(xi) + \alpha * labelx * trainx(xi)
    $$
@@ -220,47 +299,46 @@ for(int cell = 1; cell <= 200; ++cell)
 
 在一次迭代后收敛（准确率为1）
 
-![](img/demo.png)
+![](./demo.png)
 
 ###评测指标展示即分析
 
+####测试指标
+
+| 指标        | 含义                    |
+| --------- | --------------------- |
+| Accuracy  | 判断正确测试样本/全部测试样本       |
+| Precision | 判断为T的正确样本/判断为T的样本     |
+| Recall    | 判断为T的正确样本/标签为T的样本     |
+| F1        | Precision和Recall的调和平均 |
 
 ####迭代次数
 
 学习率为1,最优解为**0.843**
 
-![](img/init.png)
+![](./init.png)
 
 #### pocket
 
 迭代次数为20,随机因子设为10.0,最优解**0.85**
 
-![](img/pock.png)
+![](./pock.png)
 
 #### bagging数目
 
 1. 平滑了Accu，提高模型鲁棒性。
 2. pocket方法最优F1值为`0.482759`，这里dropout优化后最优为**0.496815**
 
-![](img/bag.png)
+![](./bag.png)
 
 #### alpha vs 迭代次数（无关）
 
 尝试多个迭代次数，发现与alpha无关。
 
-![](img/alpha.png)
+![](./alpha.png)
 
 ##四、 思考题
 
 - 有什么其他的手段可以解决数据集非线性可分的问题？
   - 使用非线性函数
   - 利用多个特征组合生成特征
-- 请查询相关资料，解释为什么要用这四种评测指标，各自的意义是什么。
-
-
-| 指标        | 定义                    | 意义              |
-| --------- | --------------------- | --------------- |
-| Accuracy  | 判断正确测试样本/全部测试样本       | 模型测试集上正确率       |
-| Precision | 判断为T的正确样本/判断为T的样本     | 评判模型对于真样本的检测准确率 |
-| Recall    | 判断为T的正确样本/标签为T的样本     | 评判模型检测真样本能力     |
-| F1        | Precision和Recall的调和平均 | 评价模型对正样本检测能力    |
